@@ -1,0 +1,3 @@
+
+1. download the file option in the webui
+2. Instead of parsing the youtube-dl command output use youtube-dl api
