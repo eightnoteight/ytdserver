@@ -2,24 +2,22 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>ytds &middot; webui</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <meta name="description" content="youtube-dl server - a web ui for youtube-dl command">
     <meta name="author" content="mr.eightnoteight@gmail.com">
+    <meta charset="utf-8">
+    <title>ytds &middot; webui</title>
 
-    <!-- Le styles -->
-    <link href="/static/css/bootstrap.css" rel="stylesheet">
-    <link href="/static/js/google-code-prettify/prettify.css" rel="stylesheet">
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <script type="text/javascript">
+      function loadprogress() {
+        $("#getprogress").load("/getprogress");
+      };
+      setInterval(function(){loadprogress()}, 2000);
+    </script>
     <style type="text/css">
-      .no-gutter [class*="-6"] {
-        padding-left:0;
-        padding-right:0;
-      }
-
-      body {
-        padding-top: 20px;
-        padding-bottom: 40px;
-      }
 
       /* Custom container */
       .container-narrow {
@@ -29,30 +27,7 @@
       .container-narrow > hr {
         margin: 30px 0;
       }
-
-      /* Main marketing message and sign up button */
-      .jumbotron {
-        margin: 60px 0;
-        text-align: center;
-      }
-      .jumbotron h1 {
-        font-size: 72px;
-        line-height: 1;
-      }
-      .jumbotron .btn {
-        font-size: 21px;
-        padding: 14px 24px;
-      }
-
-      /* Supporting marketing content */
-      .marketing {
-        margin: 60px 0;
-      }
-      .marketing p + h4 {
-        margin-top: 28px;
-      }
     </style>
-    <link href="/static/css/bootstrap-responsive.css" rel="stylesheet">
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -71,7 +46,7 @@
 
   <body>
 
-    <div class="container">
+    <div class="container-narrow">
 
       <div class="masthead">
         <ul class="nav nav-pills pull-right">
@@ -83,67 +58,79 @@
       </div>
       <hr>
 
-      <form action="/queue" method="POST" class="form-inline">
-        <div class="row-fluid no-gutter">
-          <div class="span4">
-            <input type="text" class="span12" name="url" placeholder="Video Url">
-          </div>
-          <div class="span3">
-            <input type="text" class="span12" name="args" placeholder="Optional Arguments">
-          </div>
-  {#           <button class="btn dropdown-toggle" data-toggle="dropdown">
-            Action
-            <span class="caret"></span>
-          </button> #}
-          <div class="span5">
-            <div class="btn-group span12">
-              <button type="submit" class="btn">Queue</button>
-              <button type="submit" class="btn" formaction="/resume">Resume</button>
-              <button type="submit" class="btn" formaction="/pause">Pause</button>
-              <button type="submit" class="btn" formaction="/delete">Delete</button>
-            </div>
+      <form action="/queue" method="POST">
+        <div class="input-group">
+          <span class="input-group-addon" id="basic-addon3" style="font-family: monospace">ytds &nbsp;url:</span>
+          <input type="text" name="url" class="form-control" placeholder="url or youtube id" aria-label="Text input with multiple buttons">
+        </div>
+        <br />
+        <div class="input-group">
+          <span class="input-group-addon" id="basic-addon3" style="font-family: monospace">arguments:</span>
+          <input type="text" name="args" class="form-control" placeholder="optional arguments">
+        </div>
+        <br />
+        <div style="text-align: center">
+          <div class="input-group-btn">
+            <button type="submit" class="btn btn-danger">Queue</button>
+            <button type="submit" class="btn btn-success" formaction="/resume">Resume</button>
+            <button type="submit" class="btn btn-primary" formaction="/pause">Pause</button>
+            <button type="submit" class="btn btn-warning" formaction="/delete">Delete</button>
           </div>
         </div>
       </form>
-      <div class="row-fluid">
+
+      <div id="getprogress">
         <hr>
         {% for ytd in downloads %}
-          <div class="row-fluid">
-            <div class="span8">
-              <h5>{{ downloads[ytd]['url'] }}</h5>
+          <form action="/resume" method="POST">
+            <div class="input-group">
+            <!--  id="disabledInput" -->
+              <input class="form-control" type="text" name="url" value="{{downloads[ytd]['url']}}" placeholder="{{downloads[ytd]['url']}}" aria-label="Text input with multiple buttons" readonly>
+              <!-- <span class="input-group-addon">video://{{downloads[ytd]['url']}}</span> -->
+              <div class="input-group-btn">
+                <button type="submit" class="btn btn-default">Resume</button>
+                <button type="submit" class="btn btn-default" formaction="/pause">Pause</button>
+                <button type="submit" class="btn btn-default" formaction="/delete">Delete</button>
+              </div>
             </div>
-            <div class="span4">
-              <form action="/resume" method="POST" class="form-search">
-                <input type="hidden" name="url" value="{{downloads[ytd]['url']}}" placeholder="Video Url">
-                <input type="hidden" name="args" value="{{downloads[ytd]['url']}}" placeholder="Optional Arguments">
-                <div class="btn-group  pull-right">
-                  <button type="submit" class="btn">Resume</button>
-                  <button type="submit" class="btn" formaction="/pause">Pause</button>
-                  <button type="submit" class="btn" formaction="/delete">Delete</button>
-                </div>
-              </form>
-            </div>
-          </div>
-          <div class="span10 offset2">
-              {% if downloads[ytd]['percentage'] is equalto 100 %}
-                <div class="progress progress-striped progress-success">
-                    <div class="bar" style="width: {{ downloads[ytd]['percentage'] }}%;"></div>
-                </div>
-              {% elif downloads[ytd]['pause'] %}
-                <div class="progress progress-striped progress-danger">
-                    <div class="bar" style="width: {{ downloads[ytd]['percentage'] }}%;"></div>
-                </div>
-              {% elif not downloads[ytd]['running'] %}
-                <div class="progress progress-striped progress-warning">
-                    <div class="bar" style="width: {{ downloads[ytd]['percentage'] }}%;"></div>
-                </div>
-              {% else %}
-                <div class="progress progress-striped active progress-info">
-                    <div class="bar" style="width: {{ downloads[ytd]['percentage'] }}%;"></div>
-                </div>
-              {% endif %}
+          </form>
+          <br />
+          <div>
+              <div class="progress">
+                {% if downloads[ytd]['percentage'] is equalto 100 %}
+                  <div class="progress-bar progress-bar-striped progress-bar-success" role="progressbar" style="min-width: 0.5em; width: {{ downloads[ytd]['percentage'] }}%;"></div>
+                {% elif downloads[ytd]['pause'] %}
+                  <div class="progress-bar progress-bar-striped progress-bar-danger" role="progressbar" style="min-width: 0.5em; width: {{ downloads[ytd]['percentage'] }}%;"></div>
+                {% elif not downloads[ytd]['running'] %}
+                  <div class="progress-bar progress-bar-striped progress-bar-warning" role="progressbar" style="min-width: 0.5em; width: {{ downloads[ytd]['percentage'] }}%;"></div>
+                {% else %}
+                  <div class="progress-bar progress-bar-striped active progress-bar-info" role="progressbar" style="min-width: 0.5em; width: {{ downloads[ytd]['percentage'] }}%;"></div>
+                {% endif %}
+              </div>
               <small>
-              <pre class="prettyprint linenums">{{ jsondumps(downloads[ytd]) }}</pre>
+                <div class="table-responsive">
+                  <table class="table table-striped table-condensed">
+                    <colgroup>
+                      <col class="col-xs-2"></col>
+                      <col class="col-xs-8"></col>
+                    </colgroup>
+                    <thead>
+                      <tr>
+                        <th>id</th>
+                        <th>data</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for _id in downloads[ytd] %}
+                        <tr>
+                          <td>{{ _id }}</td>
+                          <td>{{downloads[ytd][_id]}}</td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                  <!-- <pre class="prettyprint linenums">{{ jsondumps(downloads[ytd]) }}</pre> -->
+                </div>
               </small>
           </div>
         {% endfor %}
@@ -157,23 +144,10 @@
 
     </div> <!-- /container -->
 
-    <!-- Le javascript
-    ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/static/js/jquery.min.js"></script>
     <script src="/static/js/jquery.js"></script>
-    <script src="/static/js/bootstrap-transition.js"></script>
-    <script src="/static/js/bootstrap-alert.js"></script>
-    <script src="/static/js/bootstrap-modal.js"></script>
-    <script src="/static/js/bootstrap-dropdown.js"></script>
-    <script src="/static/js/bootstrap-scrollspy.js"></script>
-    <script src="/static/js/bootstrap-tab.js"></script>
-    <script src="/static/js/bootstrap-tooltip.js"></script>
-    <script src="/static/js/bootstrap-popover.js"></script>
-    <script src="/static/js/bootstrap-button.js"></script>
-    <script src="/static/js/bootstrap-collapse.js"></script>
-    <script src="/static/js/bootstrap-carousel.js"></script>
-    <script src="/static/js/bootstrap-typeahead.js"></script>
-    <script src="/static/js/google-code-prettify/prettify.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
     <script src="/static/js/application.js"></script>
   </body>
 </html>

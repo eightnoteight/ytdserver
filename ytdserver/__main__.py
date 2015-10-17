@@ -52,6 +52,13 @@ def queue():
     return redirect(url_for('showdashboard'))
     # return Response(json.dumps(downloads), mimetype='text/json')
 
+@app.route('/getprogress')
+def getprogress():
+    return render_template(
+        "progress.html",
+        downloads=downloads,
+        jsondumps=lambda ytd:json.dumps(ytd, indent=2, sort_keys=True))
+
 @app.route('/pause', methods=["POST"])
 def pause():
     ytvid = request.form['url']
