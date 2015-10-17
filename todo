@@ -1,4 +1,0 @@
-
-1. Use SQL database for answering queries.
-2. download the file option in the webui
-3. Instead of parsing the youtube-dl command output use youtube-dl api
