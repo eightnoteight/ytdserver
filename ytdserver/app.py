@@ -1,12 +1,10 @@
 #!/usr/bin/python
-from collections import deque
 import subprocess
-import sys
 import time
 import json
 import pipes
 import threading
-from flask import Flask, request, Response, render_template, redirect, url_for
+from flask import Flask, request, render_template, redirect, url_for
 app = Flask(__name__)
 glock = threading.Lock()
 downloads = {}
@@ -36,7 +34,6 @@ def ytdl_sh(ytvid):
 
 @app.route('/queue', methods=["POST"])
 def queue():
-    print request.form
     ytvid = request.form['url']
     if ytvid in downloads:
         return # redirect to dashboard with already in the queue flag set to true
@@ -56,8 +53,7 @@ def queue():
 def getprogress():
     return render_template(
         "progress.html",
-        downloads=downloads,
-        jsondumps=lambda ytd:json.dumps(ytd, indent=2, sort_keys=True))
+        downloads=downloads)
 
 @app.route('/pause', methods=["POST"])
 def pause():
@@ -99,7 +95,18 @@ def observer():
                 del downloads[ytvid]
         time.sleep(2)
 
-if __name__ == '__main__':
-    worker = threading.Thread(target=observer)
-    worker.start()
+
+def main():
+    threading.Thread(target=observer).start()
     app.run(host='0.0.0.0', port=5000)
+
+
+if __name__ in '__main__':
+    main()
+
+# for gunicorn
+if __name__ == 'app':
+    worker = threading.Thread(target=observer)
+    # KeyboardInterrupt to the main process will abruptly stop the worker daemon
+    worker.daemon = True
+    worker.start()
