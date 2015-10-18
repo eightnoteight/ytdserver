@@ -1,8 +1,8 @@
 # ytdserver
 a web ui for scheduling your youtube-dl downloads interactively.
 
-## requirements
-flask, youtube-dl
+### requirements
+flask, youtube-dl, gunicorn
 
 ## running
     mkdir ytdserver
@@ -13,11 +13,13 @@ flask, youtube-dl
     git clone https://github.com/eightnoteight/ytdserver.git
     cd ytdserver/ytdserver
     gunicorn --enable-stdio-inheritance -w 1 -b 0.0.0.0:5000 app:app --error-logfile - --access-logfile -
+    # if you haven't installed gunicorn, you can simply run the app.py as normal python script
+    python app.py
 
 ps: it is important that you run gunicorn with one worker because the data sync hasn't been implemented yet.
 
 
-## Screenshots
+### Screenshots
 
 
 ### todo:
