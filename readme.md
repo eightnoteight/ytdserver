@@ -25,9 +25,10 @@ ps: it is important that you run gunicorn with one worker because the data sync 
 ![](http://i.imgur.com/PBmLt5U.png)
 
 ### todo:
-0. convert downloads dictionary into a monitor interfaced dictionary. (thread safe)  ***
-1. use a sql database to save the state of the server, i.e global downloads dictionary.
-2. download the file option in the webui.
-3. instead of parsing the youtube-dl command output use youtube_dl api
-4. try to make a docker image and test it either using interface bridges or mitmproxy.
+- [ ] Sticky Navbar
+- [ ] convert downloads dictionary into a monitor interfaced dictionary. (thread safe)  ***
+- [ ] use a sql database to save the state of the server, i.e global downloads dictionary.
+- [ ] download the file option in the webui.
+- [ ] instead of parsing the youtube-dl command output use youtube_dl api
+- [ ] try to make a docker image and test it either using interface bridges or mitmproxy.
 
