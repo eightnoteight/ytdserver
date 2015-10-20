@@ -20,7 +20,9 @@ ps: it is important that you run gunicorn with one worker because the data sync 
 
 
 ### Screenshots
-
+![](http://i.imgur.com/VKHZLmd.png) 
+![](http://i.imgur.com/mKoQrQt.png) 
+![](http://i.imgur.com/PBmLt5U.png)
 
 ### todo:
 0. convert downloads dictionary into a monitor interfaced dictionary. (thread safe)  ***
