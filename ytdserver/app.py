@@ -14,7 +14,7 @@ def ytdl_sh(ytvid):
         downloads[ytvid]['running'] = False
         return
     proc = subprocess.Popen(
-        "youtube-dl --newline {} {}".format(downloads[ytvid]['args'], pipes.quote(ytvid)), 
+        "exec youtube-dl --newline {} {}".format(downloads[ytvid]['args'], pipes.quote(ytvid)), 
         shell=True,
         stdout=subprocess.PIPE)
     while True:
