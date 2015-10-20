@@ -19,9 +19,7 @@ def ytdl_sh(ytvid):
         stdout=subprocess.PIPE)
     while True:
         line = proc.stdout.readline()
-        if line == '':
-            break
-        if downloads[ytvid]['pause'] or downloads[ytvid]['delete']:
+        if line == '' or downloads[ytvid]['pause'] or downloads[ytvid]['delete']:
             break
         downloads[ytvid]['cmdline'] = line
         # check the 100% downloaded line
@@ -87,7 +85,9 @@ def observer():
         for ytvid in list(downloads.keys()):
             if not downloads[ytvid]['pause'] and not downloads[ytvid]['running']:
                 downloads[ytvid]['running'] = True
-                threading.Thread(target=ytdl_sh, args=(ytvid,)).start()
+                newdownload = threading.Thread(target=ytdl_sh, args=(ytvid,))
+                newdownload.daemon = True
+                newdownload.start()
             elif all([
                     downloads[ytvid]['pause'],
                     not downloads[ytvid]['running'],
@@ -96,13 +96,12 @@ def observer():
         time.sleep(2)
 
 
-def main():
-    threading.Thread(target=observer).start()
-    app.run(host='0.0.0.0', port=5000)
-
-
 if __name__ in '__main__':
-    main()
+    worker = threading.Thread(target=observer)
+    # KeyboardInterrupt to the main process will abruptly stop the worker daemon
+    worker.daemon = True
+    worker.start()
+    app.run(host='0.0.0.0', port=5000, debug=True)
 
 # for gunicorn
 if __name__ == 'app':
