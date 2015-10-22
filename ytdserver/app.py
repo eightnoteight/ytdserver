@@ -1,7 +1,6 @@
 #!/usr/bin/python
 import subprocess
 import time
-import json
 import pipes
 import threading
 from flask import Flask, request, render_template, redirect, url_for
@@ -53,6 +52,16 @@ def getprogress():
         "progress.html",
         downloads=downloads)
 
+@app.route('/getverboseprogress')
+def getverboseprogress():
+    return render_template(
+        "verboseprogress.html",
+        downloads=downloads)
+
+@app.route('/verbose')
+def verbose():
+    return render_template("verbose.html", downloads=downloads)
+
 @app.route('/pause', methods=["POST"])
 def pause():
     ytvid = request.form['url']
@@ -75,10 +84,7 @@ def delete():
 
 @app.route('/')
 def showdashboard():
-    return render_template(
-        "ytds.html", 
-        downloads=downloads, 
-        jsondumps=lambda ytd: json.dumps(ytd, indent=2, sort_keys=True))
+    return render_template("ytds.html", downloads=downloads)
 
 def observer():
     while True:
